@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ChazeFashion - Your Style, Your Way{% endblock %}</title>
+
+    <!-- Tailwind + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Animate.css for animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 text-gray-800">
+
+    <!-- Navigation Bar -->
+    <div class="navbar bg-gradient-to-r from-purple-700 to-pink-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="navbar-start">
+            <div class="dropdown">
+                <button tabindex="0" class="btn btn-ghost lg:hidden">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+                <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-white text-gray-800 rounded-box w-52">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'product_list' %}">Products</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'wishlist' %}">Wishlist</a></li>
+                        <li><a href="{% url 'profile' %}">Profile</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <a href="{% url 'home' %}" class="btn btn-ghost text-2xl font-bold flex items-center gap-2">
+                <i class="fas fa-tshirt text-pink-200 animate__animated animate__bounceIn"></i> ChazeFashion
+            </a>
+        </div>
+
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1 gap-2">
+                <li><a href="{% url 'home' %}" class="hover:bg-pink-500 rounded-lg px-3 py-2">Home</a></li>
+                <li><a href="{% url 'product_list' %}" class="hover:bg-pink-500 rounded-lg px-3 py-2">Products</a></li>
+                <li><a href="{% url 'cart' %}" class="hover:bg-pink-500 rounded-lg px-3 py-2">Cart</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'wishlist' %}" class="hover:bg-pink-500 rounded-lg px-3 py-2">Wishlist</a></li>
+                    <li><a href="{% url 'profile' %}" class="hover:bg-pink-500 rounded-lg px-3 py-2">Profile</a></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="navbar-end gap-2">
+            <!-- Dark Mode Toggle -->
+            <label class="swap swap-rotate">
+                <input type="checkbox" id="theme-toggle">
+                <svg class="swap-on fill-current w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12a7 7 0 0 0 14 0 7 7 0 0 0-14 0zm14.54-5.46A9 9 0 0 1 12 21 9 9 0 1 1 21 12c0-.63-.06-1.25-.17-1.85A7.003 7.003 0 0 0 19.54 6.54z"/></svg>
+                <svg class="swap-off fill-current w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4.354a7.646 7.646 0 1 0 0 15.292 7.646 7.646 0 0 0 0-15.292zm0 14A6.354 6.354 0 1 1 12 5.646a6.354 6.354 0 0 1 0 12.708z"/></svg>
+            </label>
+
+            {% if user.is_authenticated %}
+                <div class="dropdown dropdown-end">
+                    <button tabindex="0" class="btn btn-ghost btn-circle avatar">
+                        <div class="w-10 rounded-full">
+                            {% if user.userprofile.avatar %}
+                                <img src="{{ user.userprofile.avatar.url }}" alt="{{ user.username }}" />
+                            {% else %}
+                                <div class="bg-pink-200 text-pink-800 rounded-full w-10 h-10 flex items-center justify-center">
+                                    <span class="font-bold">{{ user.username|first|upper }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </button>
+                    <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-white text-gray-800 rounded-box w-52">
+                        <li><a href="{% url 'profile' %}">Profile</a></li>
+                        <li><a href="{% url 'wishlist' %}">Wishlist</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline text-white border-white hover:bg-white hover:text-pink-600">Login</a>
+                <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mx-auto px-4 mt-4">
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %} shadow-lg mb-4 animate__animated animate__fadeIn">
+                    <div>
+                        {% if message.tags == 'error' %}
+                            <i class="fas fa-exclamation-circle"></i>
+                        {% elif message.tags == 'success' %}
+                            <i class="fas fa-check-circle"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle"></i>
+                        {% endif %}
+                        <span>{{ message }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Floating Cart Button -->
+    <a href="{% url 'cart' %}" class="fixed bottom-8 right-8 bg-pink-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-pink-700 transition">
+        <i class="fas fa-shopping-cart text-2xl"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer class="footer footer-center p-10 bg-gradient-to-r from-purple-700 to-pink-600 text-white mt-16">
+        <nav class="grid grid-flow-col gap-4">
+            <a href="{% url 'home' %}" class="link link-hover">Home</a>
+            <a href="{% url 'product_list' %}" class="link link-hover">Products</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'wishlist' %}" class="link link-hover">Wishlist</a>
+                <a href="{% url 'profile' %}" class="link link-hover">Profile</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="link link-hover">Login</a>
+                <a href="{% url 'signup' %}" class="link link-hover">Sign Up</a>
+            {% endif %}
+        </nav> 
+        <nav>
+            <div class="grid grid-flow-col gap-4">
+                <a href="#"><i class="fab fa-twitter text-xl"></i></a>
+                <a href="#"><i class="fab fa-instagram text-xl"></i></a>
+                <a href="#"><i class="fab fa-facebook text-xl"></i></a>
+            </div>
+        </nav> 
+        <aside>
+            <p>Copyright © 2025 - All rights reserved by ChazeFashion</p>
+        </aside>
+    </footer>
+
+    <!-- Dark Mode Script -->
+    <script>
+        const toggle = document.getElementById('theme-toggle');
+        toggle.addEventListener('change', () => {
+            document.documentElement.setAttribute('data-theme', toggle.checked ? 'dark' : 'light');
+        });
+    </script>
+</body>
+</html>
