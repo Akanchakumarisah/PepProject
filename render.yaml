@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: pepproject
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn ChazeFashion.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: ChazeFashion.settings
