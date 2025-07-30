@@ -16,11 +16,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-0nlcx_n5$f8p*4bu5c5_@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [
-    'django-product-catalog-website.onrender.com',
-    'localhost',
-    '127.0.0.1',
-]
 
 LOGIN_URL = '/login/'
 
@@ -117,3 +112,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+ALLOWED_HOSTS = ['pepproject-gwmj.onrender.com', '127.0.0.1', 'localhost']
+
